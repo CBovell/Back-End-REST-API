@@ -2,6 +2,7 @@ const { application } = require('express')
 const express = require('express')
 const app =  express()
 const mongoose = require('mongoose')
+const userRoutes = require('./routes/UserRoutes')
 require('dotenv').config()
 
 app.use(express.json())
@@ -12,5 +13,8 @@ mongoose.connect(process.env.DB_STRING)
  app.listen(3000)
  )
  .catch((err) => console.log(err))
+
+
+ app.use('/users', userRoutes)
 
 

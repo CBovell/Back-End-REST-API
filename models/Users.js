@@ -6,7 +6,8 @@ const userSchema = new schema({
     username: String,
     password:String,
     cdate:{type:Date, default:Date.now},
-    pictureURL:String
+    pictureURL:String,
+    admin:Boolean
 })
 
 module.exports = mongoose.model('User', userSchema)
