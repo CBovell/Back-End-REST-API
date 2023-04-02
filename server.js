@@ -6,4 +6,11 @@ require('dotenv').config
 
 app.use(express.json())
 
+mongoose.connect(process.env.DB_STRING, { useNewUrlParser: true})
+ .then((res)=> 
+ console.log(res),
+ app.listen(3000)
+ )
+ .catch((err) => console.log(err))
+
 
