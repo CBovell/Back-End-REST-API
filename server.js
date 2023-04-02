@@ -7,7 +7,7 @@ require('dotenv').config()
 app.use(express.json())
 
 mongoose.connect(process.env.DB_STRING)
- .then((result)=> 
+ .then((res)=> 
  console.log('connected'),
  app.listen(3000)
  )
