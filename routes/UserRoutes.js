@@ -11,18 +11,18 @@ router.post('/login', async (req, res)=>{
     const user = await User.find({username: req.username})
 
     if(user==null){
-        res.status(400).send("User not found")
+        return res.status(400).send("User not found")
     }
 
     try{
         if(bcrypt.compare(req.body.password, user.password)){
             const encryptedUser=jwt.sign(user, process.env.SECRET_KEY)
-            res.status(200).json({token:encryptedUser}).send()
+            return res.status(200).json({token:encryptedUser}).send()
         }
-        res.status(400).send("Error")
+        return res.status(400).send("Error")
 
     }catch{
-        res.status(500).send()
+        return res.status(500).send()
     }
 
 
@@ -32,11 +32,11 @@ router.post('/login', async (req, res)=>{
 router.post('/signup', async (req, res)=>{
 
     if(User.find({username:req.body.username}) != null){
-        res.status(400).send("Username already in use")
+        return res.status(400).send("Username already in use")
     }
 
     if(User.find({username:req.body.email}) != null){
-        res.status(400).send("Email already in use")
+        return res.status(400).send("Email already in use")
     }
 
     try{
@@ -54,15 +54,15 @@ router.post('/signup', async (req, res)=>{
         try{
             const messege = await user.save()
             const encryptedUser=jwt.sign(user, process.env.SECRET_KEY)
-            res.status(200).json({token:encryptedUser}).send()
+            return res.status(200).json({token:encryptedUser}).send()
     
         } catch(err){
-            res.status(500).json({messege:err}).send()
+            return res.status(500).json({messege:err}).send()
         }
 
     
     }catch{
-       res.status(500).send() 
+        return res.status(500).send() 
     }
 
 })
