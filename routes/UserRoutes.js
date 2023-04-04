@@ -3,6 +3,7 @@ const router = express.Router()
 const User = require('../models/Users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Post = require('../models/Posts')
 require('dotenv').config()
 
 
@@ -52,7 +53,7 @@ router.post('/signup', async (req, res)=>{
         })
     
         try{
-            
+
             await user.save()
             const encryptedUser=jwt.sign(user, process.env.SECRET_KEY)
             return res.status(200).json({token:encryptedUser}).send()
@@ -68,10 +69,15 @@ router.post('/signup', async (req, res)=>{
 
 })
 
-router.get('/get/:id', (req, res)=>{
+router.get('/get/:id',  async (req, res)=>{
+
+    
+
 
 
 })
+
+
 
 
 
