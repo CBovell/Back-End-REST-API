@@ -52,7 +52,8 @@ router.post('/signup', async (req, res)=>{
         })
     
         try{
-            const messege = await user.save()
+            
+            await user.save()
             const encryptedUser=jwt.sign(user, process.env.SECRET_KEY)
             return res.status(200).json({token:encryptedUser}).send()
     
