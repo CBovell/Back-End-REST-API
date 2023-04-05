@@ -69,7 +69,7 @@ router.post('/signup', async (req, res)=>{
 
 })
 
-router.delete('delete/:id', checkToken, async(req, res)=>{
+router.delete('/delete/:id', checkToken, async(req, res)=>{
     if(req.user.id === req.params.id || req.user.admin){
         const validPass=bcrypt.compare(req.body.password, req.user.password)
 
@@ -89,7 +89,7 @@ router.delete('delete/:id', checkToken, async(req, res)=>{
     
 })
 
-router.patch('updatePassword/:id',checkToken, async (req, res)=>{
+router.patch('/updatePassword/:id',checkToken, async (req, res)=>{
 
     if(req.user.id===req.params.id){
         if(req.body.newPassword !=null){
