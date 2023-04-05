@@ -7,9 +7,9 @@ const Post = require('../models/Posts')
 require('dotenv').config()
 
 
-router.use('/:id', checkToken, async(res, req)=>{
+router.get('/:id', checkToken, async(res, req)=>{
     try {
-        const post = await Post.findById(req.id)
+        const post = await Post.findById(req.params.id)
         if(post.posterID == req.user.id || req.user.admin){
             res.status(200).json({post:post}).send()
         }
@@ -18,6 +18,29 @@ router.use('/:id', checkToken, async(res, req)=>{
         return res.status(500).send(error)
         
     }
+})
+
+router.delete('/:id', checkToken, async(res, req)=>{
+
+    try {
+        const posterID = await Post.findById(req.params.id).posterID
+
+        if(req.user.id === posterID || user.admin){
+            Post.findByIdAndDelete(req.params.id)
+            return res.status(200).send()
+        }
+        return res.status(400).send()
+
+        
+    } catch (error) {
+        return res.status(500).json({error:error}).send()
+    }
+
+    
+
+    
+
+
 
 
 })
