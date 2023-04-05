@@ -10,7 +10,7 @@ require('dotenv').config()
 router.get('/:id', checkToken, async(res, req)=>{
     try {
         const post = await Post.findById(req.params.id)
-        if(post.posterID == req.user.id || req.user.admin){
+        if(post.posterID == req.user._id || req.user.admin){
             res.status(200).json({post:post}).send()
         }
         
@@ -36,13 +36,31 @@ router.delete('/:id', checkToken, async(res, req)=>{
         return res.status(500).json({error:error}).send()
     }
 
-    
 
-    
-
+})
 
 
+router.patch('/updatethumb/:id', checkToken, async (req, res)=>{
 
+    if(req.user._id === req.params.id || req.user.admin){
+        try {
+            const post = await Post.findById(req.params.id)
+
+            if(req.body.thumbnailURL != null){
+                post.thumbnailURL=req.body.thumbnailURL
+                try {
+                    await post.save()
+                    return res.status(200).json({upDatedPost:post}).send()
+                } catch (error) {
+                    return res.status(500).json({error:error}).send()
+                }
+            }
+            return res.status(400).send()
+        } catch (error) {
+            return res.status(500).json({error: error}).send()
+        }
+    }
+    return res.status(400).send()
 })
 
 function checkToken(req, res, next){

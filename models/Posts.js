@@ -5,7 +5,8 @@ const postsSchema = new Schema({
     posterID:String,
     thumbnailURL:String,
     date:{type:Date, default:Date.now},
-    upVotes:Number
+    upVotes:Number,
+    comments:[String]
 })
 
 module.exports=mongoose.model('Post', postsSchema)
