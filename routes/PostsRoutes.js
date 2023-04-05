@@ -40,28 +40,33 @@ router.delete('/:id', checkToken, async(res, req)=>{
 })
 
 
-router.patch('/updatethumb/:id', checkToken, async (req, res)=>{
-
-    if(req.user._id === req.params.id || req.user.admin){
+router.patch('/updatethumb/:id', checkToken, getPost, async (req, res)=>{
+    if (req.body.thumbnailURL != null){
+        req.post.thumbnailURL=req.body.thumbnailURL
         try {
-            const post = await Post.findById(req.params.id)
-
-            if(req.body.thumbnailURL != null){
-                post.thumbnailURL=req.body.thumbnailURL
-                try {
-                    await post.save()
-                    return res.status(200).json({upDatedPost:post}).send()
-                } catch (error) {
-                    return res.status(500).json({error:error}).send()
-                }
-            }
-            return res.status(400).send()
+            await post.save()
+            return res.status(200).json({upDatedPost:post}).send()
         } catch (error) {
-            return res.status(500).json({error: error}).send()
+            return res.status(500).json({error:error}).send()
         }
     }
     return res.status(400).send()
 })
+
+
+
+async function getPost(req, res, next){
+    if(req.user._id === req.params.id || req.user.admin){
+        try {
+            const post = await Post.findById(req.params.id)
+            req.post=post
+            next()
+        } catch (error) {
+            return res.status(500).json({error:error}).send()
+        }
+    }
+    return res.status(400).send()
+}
 
 function checkToken(req, res, next){
     const header = req.headers['authorization']
