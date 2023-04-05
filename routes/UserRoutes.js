@@ -69,6 +69,26 @@ router.post('/signup', async (req, res)=>{
 
 })
 
+router.delete('delete/:id', checkToken, async(req, res)=>{
+    if(req.user.id === req.params.id || req.user.admin){
+        const validPass=bcrypt.compare(req.body.password, req.user.password)
+
+        if(validPass || req.user.admin){
+            try{
+                const deletedUser = await User.findByIdAndDelete(req.params.id)
+                res.status(200).json({username:deletedUser.username, email: deletedUser.email,pictureURL:deletedUser.pictureURL, id:deletedUser.id})
+    
+            }catch(error){
+                res.status(500).json({error:error}).send()
+            }
+
+        }
+        res.status(400).send() 
+    }
+    res.status(400).send() 
+    
+})
+
 router.patch('updatePassword/:id',checkToken, async (req, res)=>{
 
     if(req.user.id===req.params.id){
