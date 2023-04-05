@@ -69,13 +69,47 @@ router.post('/signup', async (req, res)=>{
 
 })
 
-router.get('/get/:id',  async (req, res)=>{
+router.patch('updatePassword/:id',checkToken, async (req, res)=>{
 
-    
+    if(req.user.id===req.params.id){
+        if(req.body.newPassword !=null){
+            const validPass = bcrypt.compare(req.body.oldPassword, req.user.password)
+            if(validPass){
+                try {
+                    const salt = await bcrypt.genSalt()
+                    const hashedPass = await bcrypt.hash(req.body.newPassword, salt)
+                    await User.findByIdAndUpdate(req.params.id, {password: hashedPass})
+                    return res.sendStatus(200)
 
 
+                } catch (error) {
+                    res.send(500).json({error:error}).send()
+                }
 
+            }
+            res.sendStatus(400)
+        }
+        res.sendStatus(400)
+    }
+    res.sendStatus(400)
 })
+
+
+function checkToken(req, res, next){
+    const header = req.headers['authorization']
+    const token = header && header.split(' ')
+    if (token == null){
+        return res.status(400).send()
+    }
+    jwt.verify(token, process.env.SECRET_KEY, (err, user)=>{
+        if(err){
+            return res.status(400).send()
+        }
+        req.user=user
+        next()
+
+    })
+}
 
 
 
