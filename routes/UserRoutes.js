@@ -69,9 +69,9 @@ router.post('/signup', async (req, res)=>{
 
 })
 
-router.delete('/delete/:id', checkToken, async(req, res)=>{
+router.delete('/delete/:id',checkToken, async(req, res)=>{
     if(req.user._id === req.params.id || req.user.admin){
-        const validPass=bcrypt.compare(req.body.password, req.user.password)
+        const validPass=bcrypt.compare(req.body.validPassword, req.user.password)
 
         if(validPass || req.user.admin){
             try{
@@ -89,31 +89,73 @@ router.delete('/delete/:id', checkToken, async(req, res)=>{
     
 })
 
-router.patch('/updatePassword/:id',checkToken, async (req, res)=>{
-
-    if(req.user._id===req.params.id){
-        if(req.body.newPassword !=null){
-            const validPass = bcrypt.compare(req.body.oldPassword, req.user.password)
-            if(validPass){
-                try {
-                    const salt = await bcrypt.genSalt()
-                    const hashedPass = await bcrypt.hash(req.body.newPassword, salt)
-                    await User.findByIdAndUpdate(req.params.id, {password: hashedPass})
-                    return res.sendStatus(200)
-
-
-                } catch (error) {
-                    res.send(500).json({error:error}).send()
-                }
-
-            }
-            res.sendStatus(400)
+router.patch('/updatePassword/:id',checkToken, validatePassword, async (req, res)=>{
+    try {
+        const salt = await bcrypt.genSalt()
+        try {
+            const hashedPass = await bcrypt.hash(req.body.newPassword, salt)
+            await User.findByIdAndUpdate(req.params.id, {password: hashedPass})
+            return res.sendStatus(200)
+        } catch (error) {
+            res.send(500).json({error:error}).send()
         }
-        res.sendStatus(400)
+
+
+    } catch (error) {
+        res.send(500).send()
     }
-    res.sendStatus(400)
 })
 
+router.patch('/updateUserInfo/:id', checkToken, async(req, res)=>{
+
+    if(req.user._id === req.params.id || req.user.admin){
+        const validPass=bcrypt.compare(req.body.validPassword, req.user.password)
+        if(validPass || req.user.admin){
+            const user=req.user
+            if(req.user.admin && req.user._id != req.params.id){
+                try {
+                    const user = await User.findById(req.params.id)
+        
+                } catch (error) {
+                    res.sendStatus(500)
+                }
+            }
+
+            if(req.body.username!=null){
+                try {
+                    const usernameCheck = await User.find({username:req.body.username})
+                    if(usernameCheck == null){
+                        user.username=req.body.username
+                    }
+                    res.sendStatus(400)
+                } catch (error) {
+                    res.sendStatus(500)
+                }
+            }
+
+            if(req.body.email!=null){
+                try {
+                    const emailCheck = await User.find({email:req.body.email})
+                    if(emailCheck == null){
+                        user.email=req.body.email
+                    }
+                    res.sendStatus(400)
+                } catch (error) {
+                    res.sendStatus(500)
+                }
+            }
+
+            user.save()
+
+        }
+        res.sendStatus(400)
+
+    }
+    res.sendStatus(400)
+
+
+
+})
 
 function checkToken(req, res, next){
     const header = req.headers['authorization']
@@ -131,8 +173,29 @@ function checkToken(req, res, next){
     })
 }
 
+async function validatePassword(req, res, next){
+    if(req.user._id===req.params.id){
+        if(req.body.newPassword !=null){
+            const validPass = bcrypt.compare(req.body.oldPassword, req.user.password)
+
+            if(validPass){
+                next()
+            }
+            return res.status(400).send()
+
+
+        }
+        return res.status(400).send()
+    }
+    return res.status(400).send()
 
 
 
 
-module.exports = router
+}
+
+
+
+
+
+module.exports = {router, checkToken}

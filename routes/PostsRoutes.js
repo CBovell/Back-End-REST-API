@@ -4,6 +4,7 @@ const User = require('../models/Users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Post = require('../models/Posts')
+const usersFunctions = require('./UserRoutes')
 require('dotenv').config()
 
 
@@ -20,7 +21,7 @@ router.get('/:id', checkToken, async(res, req)=>{
     }
 })
 
-router.delete('/:id', checkToken, async(res, req)=>{
+router.delete('/:id', usersFunctions.checkToken, async(res, req)=>{
 
     try {
         const posterID = await Post.findById(req.params.id).posterID
@@ -40,7 +41,7 @@ router.delete('/:id', checkToken, async(res, req)=>{
 })
 
 
-router.patch('/updatethumb/:id', checkToken, getPost, async (req, res)=>{
+router.patch('/updatethumb/:id', usersFunctions.checkToken, getPost, async (req, res)=>{
     if (req.body.thumbnailURL != null){
         req.post.thumbnailURL=req.body.thumbnailURL
         try {
@@ -68,23 +69,9 @@ async function getPost(req, res, next){
     return res.status(400).send()
 }
 
-function checkToken(req, res, next){
-    const header = req.headers['authorization']
-    const token = header && header.split(' ')
-    if (token == null){
-        return res.status(400).send()
-    }
-    jwt.verify(token, process.env.SECRET_KEY, (err, user)=>{
-        if(err){
-            return res.status(400).send()
-        }
-        req.user=user
-        next()
-
-    })
-}
 
 
 
 
-module.exports=router
+
+module.exports={router, getPost}
