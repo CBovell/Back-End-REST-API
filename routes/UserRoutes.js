@@ -115,6 +115,7 @@ router.patch('/updateUserInfo/:id', checkToken, async(req, res)=>{
             if(req.user.admin && req.user._id != req.params.id){
                 try {
                     const user = await User.findById(req.params.id)
+
         
                 } catch (error) {
                     res.sendStatus(500)
