@@ -66,7 +66,7 @@ async function getPost(req, res, next){
             return res.status(500).json({error:error}).send()
         }
     }
-    return res.status(400).send()
+    return res.status(400).send()//setting status
 }
 
 
