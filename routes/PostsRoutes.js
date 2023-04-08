@@ -8,7 +8,7 @@ const usersFunctions = require('./UserRoutes')
 require('dotenv').config()
 
 
-router.get('/:id', checkToken, async(res, req)=>{
+router.get('/:id', usersFunctions.checkToken, async(res, req)=>{
     try {
         const post = await Post.findById(req.params.id)
         if(post.posterID == req.user._id || req.user.admin){

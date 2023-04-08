@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const schema = mongoose.Schema
 
-const postsSchema = new Schema({
+const postsSchema = new schema({
     posterID:String,
     thumbnailURL:String,
     date:{type:Date, default:Date.now},

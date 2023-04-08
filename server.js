@@ -16,7 +16,7 @@ mongoose.connect(process.env.DB_STRING)
  .catch((err) => console.log(err))
 
 
- app.use('/users', userRoutes)
- app.use('/posts', postsRoutes)
+ app.use('/users', userRoutes.router)
+ app.use('/posts', postsRoutes.router)
 
 
