@@ -195,8 +195,4 @@ async function validatePassword(req, res, next){
 
 }
 
-
-
-
-
 module.exports = {router, checkToken}
