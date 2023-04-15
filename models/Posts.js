@@ -10,3 +10,4 @@ const postsSchema = new schema({
 })
 
 module.exports=mongoose.model('Post', postsSchema)
+//
